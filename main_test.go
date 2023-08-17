@@ -4,28 +4,28 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"testing"
 
 	"golang.org/x/sync/errgroup"
 )
 
-// 期待通りにHTTPサーバーが起動しているか
-// テストコードから意図通りに終了するか
-
-// キャンセル可能なcontext.Contextのオブジェクトを作成
-// 別ゴルーチンでテスト対象のrun関数を実行してHTTPサーバーを起動
-// エンドポイントに対してGETリクエストを送信
-// cancel関数を実行
-// *errgroup.Group.Waitメソッド経由でrun関数の戻り値を検証
-// GETリクエストで取得したレスポンスボディが期待する文字列であることを検証
 func TestRun(t *testing.T) {
+	l, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		t.Fatalf("failed to listen port %v", err)
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	eg, ctx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
-		return run(ctx)
+		return run(ctx, l)
 	})
 	in := "message"
+	url := fmt.Sprintf("http://%s/%s", l.Addr().String(), in)
+	// どのポート番号でListenしているか確認
+	t.Logf("try request to %q", url)
+
 	rsp, err := http.Get("http://localhost:18080/" + in)
 	if err != nil {
 		t.Errorf("failed to get: %+v", err)
