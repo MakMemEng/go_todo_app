@@ -19,7 +19,7 @@ import (
 // cancel関数を実行
 // *errgroup.Group.Waitメソッド経由でrun関数の戻り値を検証
 // GETリクエストで取得したレスポンスボディが期待する文字列であることを検証
-func TestMainFunc(t *testing.T) {
+func TestRun(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	eg, ctx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
