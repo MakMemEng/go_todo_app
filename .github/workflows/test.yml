@@ -3,6 +3,8 @@ on:
         branches:
             - "main"
     pull_request:
+        branches:
+            - "develop"
 name: test
 jobs:
     test:
