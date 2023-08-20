@@ -7,6 +7,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/MakMemEng/go_todo_app/config"
 	"golang.org/x/sync/errgroup"
@@ -28,6 +31,8 @@ func main() {
 // 割り当てたいポート番号が既に利用されている場合，競合してエラーが発生
 // 動的にポート番号を変更してrun関数を起動する
 func run(ctx context.Context) error {
+	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
+	defer stop()
 	cfg, err := config.New()
 	if err != nil {
 		return err
@@ -43,6 +48,8 @@ func run(ctx context.Context) error {
 		// 引数で受け取ったnet.Listenerを利用するので
 		// Addrフィールドは指定しない
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// コマンドラインで実験するため
+			time.Sleep(5 * time.Second)
 			fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
 		}),
 	}
