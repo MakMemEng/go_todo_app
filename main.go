@@ -73,5 +73,6 @@ func run(ctx context.Context) error {
 		log.Printf("failed to shutdown: %+v", err)
 	}
 	// Goメソッドで起動した別ゴルーチンの終了待機
+	// グレースフルシャットダウンの終了を待つ
 	return eg.Wait()
 }
