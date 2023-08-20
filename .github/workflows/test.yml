@@ -15,14 +15,14 @@ jobs:
             #       go-version: ">=1.18"
             # - uses: actions/checkout@v3
 
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v2
 
             # go.mod ファイルからGoのバージョンを抽出する
             - name: Extract Go version from go.mod
               run: echo "::set-output name=go_version::$(grep -oP '^go \K[\d.]+?' go.mod)"
 
             - name: Set up Go
-              uses: actions/setup-go@v3
+              uses: actions/setup-go@v2
               with:
                   go-version: ${{ steps.extract_go_version.outputs.go_version }}
 
